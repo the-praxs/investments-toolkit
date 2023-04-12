@@ -32,14 +32,12 @@ def barset_upward_trend() -> BarSet:
 
 
 def test_barset_from_csv_string(barset_upward_trend):
-    barset = set(
-        [
-            Bar(time="2021-01-01 00:00:00", open=10, close=11, low=9, high=12),
-            Bar(time="2021-01-02 00:00:00", open=11, close=12, low=10, high=13),
-            Bar(time="2021-01-03 00:00:00", open=12, close=13, low=11, high=14),
-            Bar(time="2021-01-04 00:00:00", open=13, close=14, low=12, high=15),
-        ]
-    )
+    barset = {
+        Bar(time="2021-01-01 00:00:00", open=10, close=11, low=9, high=12),
+        Bar(time="2021-01-02 00:00:00", open=11, close=12, low=10, high=13),
+        Bar(time="2021-01-03 00:00:00", open=12, close=13, low=11, high=14),
+        Bar(time="2021-01-04 00:00:00", open=13, close=14, low=12, high=15),
+    }
 
     assert barset == barset_upward_trend
 

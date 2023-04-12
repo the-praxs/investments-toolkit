@@ -52,15 +52,11 @@ class DegiroBroker(Broker):
 
         orders = self.api_client.get_update(request_list=request_list).orders
 
-        output = []
-
-        for order in orders.values:
-            if order.order_type != Order.OrderType.STOP_LOSS:
-                continue
-
-            output.append(self._format_stop_loss(order))
-
-        return output
+        return [
+            self._format_stop_loss(order)
+            for order in orders.values
+            if order.order_type == Order.OrderType.STOP_LOSS
+        ]
 
     @staticmethod
     def _format_stop_loss(order: Order) -> StopLoss:
@@ -73,5 +69,7 @@ class DegiroBroker(Broker):
 
         # TODO: Avoid hardcoding DG here
         return StopLoss(
-            fqn_id="DG:" + str(order.product_id), trigger=order.stop_price, valid_until=valid_until  # type: ignore
+            fqn_id=f"DG:{str(order.product_id)}",
+            trigger=order.stop_price,
+            valid_until=valid_until,
         )

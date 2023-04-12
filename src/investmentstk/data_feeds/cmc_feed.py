@@ -44,11 +44,7 @@ class CMCFeed(DataFeed):
         response.raise_for_status()
         data = response.json()
 
-        bars: BarSet = set()
-
-        for ohlc in data:
-            bars.add(self._ohlc_to_bar(ohlc, resolution))
-
+        bars: BarSet = {self._ohlc_to_bar(ohlc, resolution) for ohlc in data}
         return bars
 
     @requests_cache_configured()

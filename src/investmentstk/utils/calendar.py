@@ -12,7 +12,7 @@ def is_end_of_month(dt: datetime.datetime) -> bool:
     provided_month = dt.month
     month_of_next_day = (dt + datetime.timedelta(days=1)).month
 
-    return True if month_of_next_day != provided_month else False
+    return month_of_next_day != provided_month
 
 
 def days_to_next_month(dt: datetime.datetime) -> int:
@@ -38,9 +38,7 @@ def days_to_next_month(dt: datetime.datetime) -> int:
 def round_day(dt: datetime.datetime):
     if dt.hour > 12:
         dt = dt + datetime.timedelta(days=1)
-        return dt.replace(hour=0, minute=0, second=0)
-    else:
-        return dt.replace(hour=0, minute=0, second=0)
+    return dt.replace(hour=0, minute=0, second=0)
 
 
 def is_saturday(dt: datetime.datetime) -> bool:
@@ -67,7 +65,7 @@ def is_weekend(dt) -> bool:
     """
     weekday = dt.date().isoweekday()
 
-    return weekday == 6 or weekday == 7
+    return weekday in [6, 7]
 
 
 def is_last_bar_closed(resolution: TimeResolution, now: Optional[datetime.datetime] = None) -> bool:

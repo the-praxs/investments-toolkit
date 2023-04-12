@@ -31,9 +31,7 @@ def merge_dataframes(dataframes: list[pd.DataFrame], join: str = "outer") -> pd.
     :param join: the type of join
     :return:
     """
-    dataframe = pd.concat(dataframes, axis="columns", join=join)
-
-    return dataframe
+    return pd.concat(dataframes, axis="columns", join=join)
 
 
 def convert_daily_ohlc_to_weekly(dataframe: pd.DataFrame) -> pd.DataFrame:

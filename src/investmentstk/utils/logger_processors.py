@@ -74,9 +74,7 @@ def rename_event_to_msg(_: WrappedLogger, __: str, event_dict: EventDict) -> Eve
     When not in prod, rename "event" (structlog default) to "message" (GCP convention)
     https://cloud.google.com/logging/docs/structured-logging#special-payload-fields
     """
-    event = event_dict.pop("event", None)
-
-    if event:
+    if event := event_dict.pop("event", None):
         event_dict["message"] = event
 
     return event_dict

@@ -65,20 +65,9 @@ def average_true_range(dataframe: DataFrame, periods: int = 14) -> pd.Series:
     ranges = pd.concat([high_low, high_close, low_close], axis=1)
     true_range = np.max(ranges, axis=1)
 
-    # TODO: I didn't bother parametrizing this as I will always use SSMA (RMA)
-    # Not 100% sure what adjust means. When True, it matches CMC sources. For Avanza,
-    # it doesn't make much of a difference.
-    #
-    # With: adjust=True, ignore_na=True
-    # Good results with CMC and TradingView on day, but not week?
-    #
-
-    # For SMA:  .rolling(periods).sum() / periods
-    # For EMA:  .ewm(periods).mean()
-    # For SSMA: .ewm(alpha=1 / periods, min_periods=periods, adjust=False).mean()
-    atr = true_range.ewm(alpha=1 / periods, min_periods=periods, adjust=True, ignore_na=True).mean()
-
-    return atr
+    return true_range.ewm(
+        alpha=1 / periods, min_periods=periods, adjust=True, ignore_na=True
+    ).mean()
 
 
 def average_true_range_trailing_stop(dataframe: pd.DataFrame, periods: int = 14, multiplier: float = 3) -> pd.DataFrame:
@@ -116,18 +105,13 @@ def average_true_range_trailing_stop(dataframe: pd.DataFrame, periods: int = 14,
         if current["close"] > previous["stop"] and previous["close"] > previous["stop"]:
             new_stop = max(previous["stop"], current["close"] - current["stop_distance"])
 
-        # If the current price is below the previous stop and the previous price was also below (no-cross),
-        # take either the previous stop or the current one, whatever is lower
-        # (when short, stop never goes up)
         elif current["close"] < previous["stop"] and previous["close"] < previous["stop"]:
             new_stop = min(previous["stop"], current["close"] + current["stop_distance"])
 
-        # Otherwise, there was a cross. Check the direction and add the stop accordingly
+        elif current["close"] > previous["stop"]:
+            new_stop = current["close"] - current["stop_distance"]
         else:
-            if current["close"] > previous["stop"]:
-                new_stop = current["close"] - current["stop_distance"]
-            else:
-                new_stop = current["close"] + current["stop_distance"]
+            new_stop = current["close"] + current["stop_distance"]
 
         # Store the stop value
         dataframe.at[index_df, "stop"] = new_stop
@@ -152,4 +136,4 @@ def atr_stop_loss_from_asset(asset: Asset) -> pd.DataFrame:
 
     dataframe = asset.retrieve_ohlc(resolution=resolution)
     dataframe = average_true_range_trailing_stop(dataframe, periods=ATR_PERIOD, multiplier=multiplier)
-    return dataframe[0:offset]
+    return dataframe[:offset]

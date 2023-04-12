@@ -36,20 +36,20 @@ def _initialize_structlog() -> None:
     """
     _initialize_stlib_logger()
 
-    if not is_in_cloud_run():
-        extra_processors = [
-            structlog.processors.TimeStamper(fmt="%Y-%m-%d %H:%M.%S"),
-            prefix_logger_name_on_message,
-            structlog.dev.ConsoleRenderer(),
-        ]
-    else:
-        extra_processors = [
+    extra_processors = (
+        [
             structlog.processors.TimeStamper(fmt="iso"),
             ModuleInfoProcessor(add_lineno=True, add_module=True),
             rename_event_to_msg,
             structlog.processors.JSONRenderer(),
         ]
-
+        if is_in_cloud_run()
+        else [
+            structlog.processors.TimeStamper(fmt="%Y-%m-%d %H:%M.%S"),
+            prefix_logger_name_on_message,
+            structlog.dev.ConsoleRenderer(),
+        ]
+    )
     structlog.configure(
         processors=[
             structlog.threadlocal.merge_threadlocal,

@@ -21,10 +21,7 @@ def avoid_caching_google_api_requests(response: requests.Response) -> bool:
     Returns a boolean indicating whether or not that response should be cached.
     """
 
-    if "google" in response.url.lower():
-        return False
-
-    return True
+    return "google" not in response.url.lower()
 
 
 def cache_default_options(hours: float = 24):

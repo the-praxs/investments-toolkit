@@ -32,9 +32,7 @@ class Asset:
 
         # Look at the cache, which is lazily loaded
         cache = asset_cache.AssetCache()
-        cached_asset = cache.retrieve(fqn_id)
-
-        if cached_asset:
+        if cached_asset := cache.retrieve(fqn_id):
             logger.debug("Found in local cache")
             return cached_asset
         else:
@@ -56,7 +54,7 @@ class Asset:
 
         output = dict(fqn_id=self.fqn_id, name=self.name)
 
-        output.update(dataclasses.asdict(client.retrieve_price(self.source_id)))
+        output |= dataclasses.asdict(client.retrieve_price(self.source_id))
 
         return output
 

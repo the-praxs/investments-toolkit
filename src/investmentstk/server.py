@@ -79,9 +79,7 @@ def price_bulk(p: str) -> list:
 
 def _price_common(asset_fqn: str) -> dict:
     asset = Asset.from_id(asset_fqn)
-    price = asset.retrieve_price()
-
-    return price
+    return asset.retrieve_price()
 
 
 @app.get("/stop_losses_broker")
@@ -250,7 +248,7 @@ def _parse_input_list(input_list: str) -> list[str]:
     """
     Converts a CSV list of assets IDs into a list of parsed IDs (but not Asset objects)
     """
-    return [fqn_id for fqn_id in input_list.split(",") if fqn_id != "" and fqn_id != ":"]
+    return [fqn_id for fqn_id in input_list.split(",") if fqn_id not in ["", ":"]]
 
 
 def _input_list_to_assets(input_list: str) -> list[Asset]:

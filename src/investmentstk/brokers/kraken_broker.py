@@ -101,11 +101,9 @@ class KrakenBroker(Broker):
 
     @classmethod
     def _kraken_request(cls, uri_path, data, api_key, api_sec):
-        headers = {}
+        headers = {
+            "API-Key": api_key,
+            "API-Sign": cls._get_kraken_signature(uri_path, data, api_sec),
+        }
 
-        headers["API-Key"] = api_key
-        headers["API-Sign"] = cls._get_kraken_signature(uri_path, data, api_sec)
-
-        req = requests.post((cls.API_URL + uri_path), headers=headers, data=data)
-
-        return req
+        return requests.post((cls.API_URL + uri_path), headers=headers, data=data)
